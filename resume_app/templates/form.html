@@ -1,0 +1,241 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Resume Generator</title>
+
+    <style>
+      body {
+        font-family: Arial;
+        background: #f4f6f9;
+        margin: 0;
+      }
+
+      .container {
+        width: 60%;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        margin-top: 30px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px gray;
+      }
+
+      h2 {
+        text-align: center;
+        color: #2c3e50;
+      }
+
+      h3 {
+        color: #34495e;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 5px;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+        padding: 8px;
+        margin: 5px 0;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+
+      button {
+        background: #2c3e50;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #1a252f;
+      }
+    </style>
+
+    <script>
+      // same JS as before (education, project, internship)
+      function addEducationField() {
+        let container = document.getElementById("education-container");
+        let div = document.createElement("div");
+        div.innerHTML = `
+        <input type="text" placeholder="College">
+        <input type="text" placeholder="Course">
+        <input type="text" placeholder="Marks"><br>
+    `;
+        container.appendChild(div);
+      }
+
+      function isFilled(...values) {
+        return values.some((value) => value.trim().length > 0);
+      }
+
+function combineEducation() {
+  let inputs = document.querySelectorAll("#education-container input");
+  let data = "";
+
+  for (let i = 0; i < inputs.length; i += 3) {
+    let college = inputs[i].value.trim();
+    let course = inputs[i + 1].value.trim();
+    let marks = inputs[i + 2].value.trim();
+
+    // skip completely empty row
+    if (!college && !course && !marks) continue;
+
+    data += "College:" + college + "\n";
+    data += "Course:" + course + "\n";
+    data += "Marks:" + marks + "\n\n";
+  }
+
+  document.getElementById("education").value = data.trim();
+}
+
+      function addProjectField() {
+        let c = document.getElementById("project-container");
+        let d = document.createElement("div");
+        d.innerHTML = `
+        <input type="text" placeholder="Title">
+        <input type="text" placeholder="Tech">
+        <textarea placeholder="Description"></textarea>
+    `;
+        c.appendChild(d);
+      }
+
+      function combineProjects() {
+        let inputs = document.querySelectorAll(
+          "#project-container input, #project-container textarea",
+        );
+        let data = "";
+
+        for (let i = 0; i < inputs.length; i += 3) {
+          let title = inputs[i].value;
+          let tech = inputs[i + 1].value;
+          let desc = inputs[i + 2].value;
+          if (!isFilled(title, tech, desc)) {
+            continue;
+          }
+          data += "Title: " + title + "\n";
+          data += "Tech: " + tech + "\n";
+          data += "Desc: " + desc + "\n\n";
+        }
+
+        document.getElementById("projects").value = data.trim();
+      }
+
+      function addInternshipField() {
+        let c = document.getElementById("internship-container");
+        let d = document.createElement("div");
+        d.innerHTML = `
+        <input type="text" placeholder="Company">
+        <input type="text" placeholder="Role">
+        <textarea placeholder="Work"></textarea>
+    `;
+        c.appendChild(d);
+      }
+
+      function combineInternships() {
+        let inputs = document.querySelectorAll(
+          "#internship-container input, #internship-container textarea",
+        );
+        let data = "";
+        for (let i = 0; i < inputs.length; i += 3) {
+          let company = inputs[i].value;
+          let role = inputs[i + 1].value;
+          let work = inputs[i + 2].value;
+          if (!isFilled(company, role, work)) {
+            continue;
+          }
+          data += "Company: " + company + "\n";
+          data += "Role: " + role + "\n";
+          data += "Work: " + work + "\n\n";
+        }
+        document.getElementById("internship").value = data.trim();
+      }
+
+      function prepareData() {
+        combineEducation();
+        combineProjects();
+        combineInternships();
+      }
+    </script>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>Resume Generator</h2>
+
+      <form method="POST" onsubmit="prepareData()">
+        {% csrf_token %}
+
+        <input name="name" placeholder="Full Name" />
+        <input name="email" placeholder="Email" />
+        <input name="phone" placeholder="Phone" />
+
+        <h3>Career Objective</h3>
+        <textarea name="career_objective"></textarea>
+
+        <h3>Education</h3>
+        <div id="education-container">
+          <input placeholder="College" />
+          <input placeholder="Course" />
+          <input type="number" placeholder="Marks / Percentage" min="0" max="100" step="0.01">
+        </div>
+        <button type="button" onclick="addEducationField()">
+          + Add Education
+        </button>
+        <input type="hidden" name="education" id="education" />
+
+
+
+        <h3>Projects</h3>
+        <div id="project-container">
+          <input placeholder="Title" />
+          <input placeholder="Tech" />
+          <textarea placeholder="Description"></textarea>
+        </div>
+        <button type="button" onclick="addProjectField()">+ Add Project</button>
+        <input type="hidden" name="projects" id="projects" />
+
+        <h3>Internships</h3>
+        <div id="internship-container">
+          <input placeholder="Company" />
+          <input placeholder="Role" />
+          <textarea placeholder="Work"></textarea>
+        </div>
+        <button type="button" onclick="addInternshipField()">
+          + Add Internship
+        </button>
+        <input type="hidden" name="internship" id="internship" />
+
+        <h3>Languages Known</h3>
+<textarea name="languages_known" placeholder="English, Hindi"></textarea>
+
+        <h3>Skills</h3>
+        <textarea
+          name="programming_languages"
+          placeholder="Programming Languages"
+        ></textarea>
+        <textarea name="web_frameworks" placeholder="Frameworks"></textarea>
+        <textarea name="databases" placeholder="Databases"></textarea>
+        <textarea name="tools" placeholder="Tools"></textarea>
+
+        <h3>Strengths</h3>
+<textarea name="strengths" placeholder="Example: Quick learner, Team player"></textarea>
+
+<h3>Certificates</h3>
+<textarea name="certificates" placeholder="Comma separated"></textarea>
+
+<h3>Extracurricular Activities</h3>
+<textarea name="extracurricular"></textarea>
+
+        <h3>Other</h3>
+        <textarea name="achievements" placeholder="Achievements"></textarea>
+        <textarea name="hobbies" placeholder="Hobbies"></textarea>
+
+        <br /><br />
+        <button type="submit">Generate Resume</button>
+      </form>
+    </div>
+  </body>
+</html>
