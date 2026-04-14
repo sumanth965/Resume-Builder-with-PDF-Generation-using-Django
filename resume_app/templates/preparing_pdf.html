@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-20 text-center" 
+     x-data="{ 
+        status: '{{ file_url|yesno:'SUCCESS,PENDING' }}', 
+        fileUrl: '{{ file_url|default:'' }}', 
+        taskId: '{{ task_id|default:'' }}',
+        checkStatus() {
+            if (this.fileUrl) return; // Already done (Sync)
+            if (!this.taskId) return;
+
+            fetch(`/api/v1/pdf/status/${this.taskId}/`)
+                .then(res => res.json())
+                .then(data => {
+                    this.status = data.status;
+                    if (data.status === 'SUCCESS') {
+                        this.fileUrl = data.result.file_url;
+                        this.$dispatch('notify', { msg: 'Resume Generated!', type: 'success' });
+                    } else if (data.status !== 'FAILURE') {
+                        setTimeout(() => this.checkStatus(), 2000);
+                    }
+                });
+        }
+     }" 
+     x-init="checkStatus()">
+    
+    <div class="bg-white rounded-3xl shadow-2xl p-12 border border-slate-100">
+        <!-- Loading State -->
+        <template x-if="status === 'PENDING' || status === 'STARTED'">
+            <div class="space-y-6">
+                <div class="relative w-24 h-24 mx-auto">
+                    <div class="absolute inset-0 border-4 border-primary-100 rounded-full"></div>
+                    <div class="absolute inset-0 border-4 border-primary-600 rounded-full border-t-transparent animate-spin"></div>
+                </div>
+                <h1 class="text-3xl font-extrabold text-slate-900">Preparing Your Resume</h1>
+                <p class="text-slate-500 max-w-sm mx-auto">Our high-fidelity engine is meticulously rendering your document. This only takes a few seconds...</p>
+            </div>
+        </template>
+
+        <!-- Success State -->
+        <template x-if="status === 'SUCCESS'">
+            <div class="space-y-8 animate-in zoom-in duration-500">
+                <div class="w-24 h-24 bg-green-100 text-green-600 rounded-full mx-auto flex items-center justify-center">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-extrabold text-slate-900">Resume Ready!</h1>
+                    <p class="text-slate-500 mt-2">Your professional resume has been generated successfully.</p>
+                </div>
+                <div class="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
+                    <a :href="fileUrl" download class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 px-8 rounded-2xl shadow-xl shadow-primary-200 transition-all transform hover:-translate-y-1">
+                        Download Now
+                    </a>
+                    <a href="/" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-4 px-8 rounded-2xl transition-all">
+                        Create Another
+                    </a>
+                </div>
+            </div>
+        </template>
+
+        <!-- Failure State -->
+        <template x-if="status === 'FAILURE'">
+            <div class="space-y-6">
+                <div class="w-20 h-20 bg-orange-50 text-orange-600 rounded-full mx-auto flex items-center justify-center">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                </div>
+                <h1 class="text-2xl font-extrabold text-slate-900">PDF Rendering Paused</h1>
+                <p class="text-slate-500 max-w-sm mx-auto text-sm">We couldn't generate the PDF because the <b>GTK+</b> library is missing on this machine. You can still download the resume as a high-fidelity <b>HTML</b> file and save it as PDF from your browser.</p>
+                
+                <div class="flex flex-col space-y-3">
+                    <a href="{% if resume %}{% url 'export_resume_html' resume.id %}{% endif %}" target="_blank" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-8 rounded-xl transition shadow-lg">
+                        Open HTML Version
+                    </a>
+                    <a href="/" class="text-slate-400 text-xs hover:underline">Return to Dashboard</a>
+                </div>
+            </div>
+        </template>
+    </div>
+</div>
+{% endblock %}

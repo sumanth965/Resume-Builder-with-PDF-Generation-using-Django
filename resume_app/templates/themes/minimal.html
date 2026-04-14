@@ -1,0 +1,65 @@
+<div class="resume-container minimal-theme">
+    <style>
+        .minimal-theme { font-family: 'Roboto', sans-serif; font-weight: 300; line-height: 1.6; color: #333; }
+        .minimal-theme .header { margin-bottom: 40px; }
+        .minimal-theme h1 { font-size: 28pt; font-weight: 700; color: #000; margin: 0; }
+        .minimal-theme .contact { font-size: 11pt; color: #888; margin-top: 5px; }
+        .minimal-theme section { margin-bottom: 30px; }
+        .minimal-theme h2 { font-size: 10pt; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 15px; }
+        .minimal-theme .item { margin-bottom: 20px; }
+        .minimal-theme .item-header { font-weight: 700; font-size: 12pt; color: #111; }
+        .minimal-theme .subtitle { font-size: 10pt; color: #555; }
+        .minimal-theme .description { font-size: 10pt; color: #444; margin-top: 5px; }
+        .minimal-theme .skill-tag { display: inline-block; margin-right: 15px; margin-bottom: 5px; font-size: 10pt; }
+        .minimal-theme .skill-category { font-weight: 700; color: #000; }
+    </style>
+
+    <div class="header">
+        <h1>{{ name|default:'Your Name' }}</h1>
+        <div class="contact">
+            {{ email }} &middot; {{ phone }}
+        </div>
+    </div>
+
+    <section>
+        <h2>About</h2>
+        <div class="description">{{ career_objective }}</div>
+    </section>
+
+    {% if education_list %}
+    <section>
+        <h2>Education</h2>
+        {% for edu in education_list %}
+        <div class="item">
+            <div class="item-header">{{ edu.college }}</div>
+            <div class="subtitle">{{ edu.course }} &mdash; {{ edu.marks }}%</div>
+        </div>
+        {% endfor %}
+    </section>
+    {% endif %}
+
+    {% if experience_list %}
+    <section>
+        <h2>Experience</h2>
+        {% for exp in experience_list %}
+        <div class="item">
+            <div class="item-header">{{ exp.company }}</div>
+            <div class="subtitle">{{ exp.role }}</div>
+            <div class="description">{{ exp.work }}</div>
+        </div>
+        {% endfor %}
+    </section>
+    {% endif %}
+
+    <section>
+        <h2>Tech</h2>
+        <div class="skills-minimal">
+            {% if programming_languages %}
+            <div class="skill-tag"><span class="skill-category">Expertise</span> {{ programming_languages }}</div>
+            {% endif %}
+            {% if tools %}
+            <div class="skill-tag"><span class="skill-category">Tools</span> {{ tools }}</div>
+            {% endif %}
+        </div>
+    </section>
+</div>

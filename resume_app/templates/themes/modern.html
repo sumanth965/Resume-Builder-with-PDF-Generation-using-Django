@@ -1,0 +1,76 @@
+<div class="resume-container modern-theme">
+    <style>
+        .modern-theme { font-family: 'Inter', sans-serif; line-height: 1.5; color: #334155; }
+        .modern-theme .header { text-align: center; border-bottom: 2px solid #2563eb; padding-bottom: 20px; margin-bottom: 30px; }
+        .modern-theme h1 { font-size: 32px; font-weight: 800; color: #0f172a; margin: 0; margin-bottom: 8px; }
+        .modern-theme .contact { font-size: 14px; color: #64748b; }
+        .modern-theme section { margin-bottom: 24px; }
+        .modern-theme h2 { font-size: 12px; font-weight: 700; color: #1d4ed8; text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-bottom: 12px; }
+        .modern-theme .item { margin-bottom: 16px; }
+        .modern-theme .item-header { display: flex; justify-content: space-between; font-weight: 700; font-size: 14px; color: #1e293b; }
+        .modern-theme .item-meta { font-size: 12px; font-weight: 600; color: #2563eb; background: #eff6ff; padding: 2px 8px; border-radius: 4px; }
+        .modern-theme .subtitle { font-size: 12px; color: #64748b; font-style: italic; }
+        .modern-theme .description { font-size: 13px; color: #475569; margin-top: 4px; }
+        .modern-theme .skills { display: flex; gap: 20px; border-top: 1px solid #f1f5f9; padding-top: 16px; }
+        .modern-theme .skill-item { flex: 1; }
+        .modern-theme .skill-label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px; }
+        .modern-theme .skill-value { font-size: 12px; color: #334155; }
+    </style>
+
+    <div class="header">
+        <h1 x-text="name || '{{ name|default:'Your Name' }}'"></h1>
+        <div class="contact">
+            <span x-text="email || '{{ email }}'"></span> | <span x-text="phone || '{{ phone }}'"></span>
+        </div>
+    </div>
+
+    <section x-show="objective || '{{ career_objective }}'">
+        <h2>Professional Summary</h2>
+        <div class="description" x-text="objective || '{{ career_objective }}'"></div>
+    </section>
+
+    {% if education_list %}
+    <section>
+        <h2>Education</h2>
+        {% for edu in education_list %}
+        <div class="item">
+            <div class="item-header">
+                <span>{{ edu.college }}</span>
+                <span class="item-meta">{{ edu.marks }}%</span>
+            </div>
+            <div class="subtitle">{{ edu.course }}</div>
+        </div>
+        {% endfor %}
+    </section>
+    {% endif %}
+
+    {% if experience_list %}
+    <section>
+        <h2>Experience</h2>
+        {% for exp in experience_list %}
+        <div class="item">
+            <div class="item-header">
+                <span>{{ exp.company }}</span>
+                <span class="subtitle">{{ exp.role }}</span>
+            </div>
+            <div class="description">{{ exp.work }}</div>
+        </div>
+        {% endfor %}
+    </section>
+    {% endif %}
+
+    <div class="skills">
+        {% if programming_languages %}
+        <div class="skill-item">
+            <div class="skill-label">Expertise</div>
+            <div class="skill-value">{{ programming_languages }}</div>
+        </div>
+        {% endif %}
+        {% if tools %}
+        <div class="skill-item">
+            <div class="skill-label">Tools</div>
+            <div class="skill-value">{{ tools }}</div>
+        </div>
+        {% endif %}
+    </div>
+</div>

@@ -1,241 +1,194 @@
-<!doctype html>
-<html>
-  <head>
-    <title>Resume Generator</title>
+{% extends 'base.html' %}
 
-    <style>
-      body {
-        font-family: Arial;
-        background: #f4f6f9;
-        margin: 0;
-      }
+{% block content %}
+<div class="flex flex-col lg:flex-row h-[calc(100vh-64px)] overflow-hidden" 
+     x-data="{ 
+        name: '{{ resume.name|default:''|escapejs }}', 
+        email: '{{ resume.email|default:''|escapejs }}', 
+        phone: '{{ resume.phone|default:''|escapejs }}', 
+        objective: '{{ resume.career_objective|default:''|escapejs }}',
+        template: '{{ resume.template_name|default:'modern' }}',
+        activeTab: 'personal' 
+     }">
+    
+    <!-- LEFT: EDITOR SIDEBAR -->
+    <aside class="w-full lg:w-[450px] bg-white/80 backdrop-blur-xl border-r border-slate-200 flex flex-col h-full shadow-2xl z-10">
+        <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+            <h1 class="text-xl font-bold text-slate-900">{% if resume %}Edit{% else %}Create{% endif %} Resume</h1>
+            <div id="sync-status" class="htmx-indicator flex items-center space-x-2 text-primary-600 animate-pulse">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                <span class="text-[10px] font-bold uppercase tracking-widest">Syncing</span>
+            </div>
+        </div>
 
-      .container {
-        width: 60%;
-        margin: auto;
-        background: white;
-        padding: 20px;
-        margin-top: 30px;
-        border-radius: 10px;
-        box-shadow: 0px 0px 10px gray;
-      }
+        <form method="POST" 
+              action="{% if resume %}{% url 'edit_resume' resume.id %}{% else %}{% url 'create_resume' %}{% endif %}"
+              hx-post="{% url 'live_preview' %}"
+              hx-trigger="keyup changed delay:1s, change"
+              hx-target="#preview-window"
+              hx-swap="outerHTML"
+              hx-indicator="#sync-status"
+              hx-on:htmx:config-request="prepareData()"
+              class="flex-grow overflow-y-auto p-6 space-y-8 custom-scrollbar">
+            {% csrf_token %}
+            <input type="hidden" name="resume_id" value="{{ resume.id }}">
 
-      h2 {
-        text-align: center;
-        color: #2c3e50;
-      }
+            <!-- Form Tabs -->
+            <div class="flex space-x-1 p-1 bg-slate-100 rounded-lg mb-6">
+                <button type="button" @click="activeTab = 'personal'" :class="activeTab === 'personal' ? 'bg-white shadow text-primary-600' : 'text-slate-500 hover:text-slate-700'" class="flex-1 py-1.5 text-xs font-semibold rounded-md transition focus:outline-none">Info</button>
+                <button type="button" @click="activeTab = 'content'" :class="activeTab === 'content' ? 'bg-white shadow text-primary-600' : 'text-slate-500 hover:text-slate-700'" class="flex-1 py-1.5 text-xs font-semibold rounded-md transition focus:outline-none">Sections</button>
+                <button type="button" @click="activeTab = 'skills'" :class="activeTab === 'skills' ? 'bg-white shadow text-primary-600' : 'text-slate-500 hover:text-slate-700'" class="flex-1 py-1.5 text-xs font-semibold rounded-md transition focus:outline-none">Skills</button>
+                <button type="button" @click="activeTab = 'theme'" :class="activeTab === 'theme' ? 'bg-white shadow text-primary-600' : 'text-slate-500 hover:text-slate-700'" class="flex-1 py-1.5 text-xs font-semibold rounded-md transition focus:outline-none">Theme</button>
+            </div>
 
-      h3 {
-        color: #34495e;
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 5px;
-      }
+            <!-- Tab: Personal -->
+            <div x-show="activeTab === 'personal'" x-transition class="space-y-4">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">Full Name</label>
+                    <input name="name" x-model="name" placeholder="Sumanth Kumar" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition bg-slate-50/50" />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">Email</label>
+                        <input name="email" x-model="email" type="email" placeholder="sumanth@example.com" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition bg-slate-50/50" />
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">Phone</label>
+                        <input name="phone" x-model="phone" placeholder="+91 9876543210" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition bg-slate-50/50" />
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">Career Objective</label>
+                    <textarea name="career_objective" x-model="objective" rows="4" placeholder="Innovative software developer..." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition bg-slate-50/50"></textarea>
+                </div>
+            </div>
 
-      input,
-      textarea {
-        width: 100%;
-        padding: 8px;
-        margin: 5px 0;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-      }
+            <!-- Tab: Content -->
+            <div x-show="activeTab === 'content'" x-transition class="space-y-8">
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center px-1">
+                        <h3 class="text-sm font-bold text-slate-700">Education</h3>
+                        <button type="button" hx-get="{% url 'get_education_form' %}" hx-target="#education-items" hx-swap="beforeend" class="text-[10px] font-bold text-primary-600 hover:text-primary-700 flex items-center space-x-1">
+                             <span>ADD ROW</span>
+                        </button>
+                    </div>
+                    <div id="education-items" class="space-y-3">
+                        {% for row in education_rows %}
+                            {% include 'partials/education_row.html' with institution=row.college degree=row.course marks=row.marks %}
+                        {% endfor %}
+                    </div>
+                </div>
 
-      button {
-        background: #2c3e50;
-        color: white;
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-      }
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center px-1">
+                        <h3 class="text-sm font-bold text-slate-700">Experience</h3>
+                        <button type="button" hx-get="{% url 'get_experience_form' %}" hx-target="#experience-items" hx-swap="beforeend" class="text-[10px] font-bold text-primary-600 hover:text-primary-700 flex items-center space-x-1">
+                             <span>ADD ROW</span>
+                        </button>
+                    </div>
+                    <div id="experience-items" class="space-y-3">
+                        {% for row in experience_rows %}
+                            {% include 'partials/experience_row.html' with company=row.company role=row.role description=row.work %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
 
-      button:hover {
-        background: #1a252f;
-      }
-    </style>
+            <!-- Tab: Skills -->
+            <div x-show="activeTab === 'skills'" x-transition class="space-y-4">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">Languages</label>
+                    <textarea name="programming_languages" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none transition text-sm">{{ resume.programming_languages }}</textarea>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">Tools</label>
+                    <textarea name="tools" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none transition text-sm">{{ resume.tools }}</textarea>
+                </div>
+            </div>
 
-    <script>
-      // same JS as before (education, project, internship)
-      function addEducationField() {
-        let container = document.getElementById("education-container");
-        let div = document.createElement("div");
-        div.innerHTML = `
-        <input type="text" placeholder="College">
-        <input type="text" placeholder="Course">
-        <input type="text" placeholder="Marks"><br>
-    `;
-        container.appendChild(div);
-      }
+            <!-- Tab: Theme -->
+            <div x-show="activeTab === 'theme'" x-transition class="grid grid-cols-2 gap-4">
+                <label class="cursor-pointer">
+                    <input type="radio" name="template_name" value="modern" x-model="template" class="hidden" />
+                    <div :class="template === 'modern' ? 'border-primary-600 bg-primary-50/50' : 'border-slate-100'" class="p-4 rounded-2xl border-2 transition-all">
+                        <div class="w-full h-24 bg-slate-200 rounded-lg mb-2"></div>
+                        <div class="text-center text-[10px] font-bold">Modern</div>
+                    </div>
+                </label>
+                <label class="cursor-pointer">
+                    <input type="radio" name="template_name" value="professional" x-model="template" class="hidden" />
+                    <div :class="template === 'professional' ? 'border-primary-600 bg-primary-50/50' : 'border-slate-100'" class="p-4 rounded-2xl border-2 transition-all">
+                        <div class="w-full h-24 bg-slate-800 rounded-lg mb-2"></div>
+                        <div class="text-center text-[10px] font-bold">Professional</div>
+                    </div>
+                </label>
+                <label class="cursor-pointer col-span-2">
+                    <input type="radio" name="template_name" value="minimal" x-model="template" class="hidden" />
+                    <div :class="template === 'minimal' ? 'border-primary-600 bg-primary-50/50' : 'border-slate-100'" class="p-4 rounded-2xl border-2 transition-all">
+                        <div class="text-center text-[10px] font-bold">Minimalist</div>
+                    </div>
+                </label>
+            </div>
 
-      function isFilled(...values) {
-        return values.some((value) => value.trim().length > 0);
-      }
+            <div class="pt-8 flex flex-col space-y-3">
+                <button type="submit" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-4 rounded-2xl shadow-xl transition-all active:scale-95 flex items-center justify-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    <span>Save & Download</span>
+                </button>
+            </div>
 
-function combineEducation() {
-  let inputs = document.querySelectorAll("#education-container input");
-  let data = "";
+            <input type="hidden" name="education" id="education" />
+            <input type="hidden" name="internship" id="internship" />
+        </form>
+    </aside>
 
-  for (let i = 0; i < inputs.length; i += 3) {
-    let college = inputs[i].value.trim();
-    let course = inputs[i + 1].value.trim();
-    let marks = inputs[i + 2].value.trim();
+    <!-- RIGHT: LIVE PREVIEW -->
+    <main class="flex-grow bg-slate-100/30 p-8 lg:p-12 overflow-y-auto custom-scrollbar">
+        <div class="bg-white max-w-[800px] mx-auto shadow-2xl rounded-sm">
+            <div id="preview-window">
+               {% if resume %}
+                   {% with template_name=resume.template_name %}
+                       {% include 'partials/preview_pane.html' %}
+                   {% endwith %}
+               {% else %}
+                   {% include 'partials/preview_pane.html' %}
+               {% endif %}
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
 
-    // skip completely empty row
-    if (!college && !course && !marks) continue;
+{% block extra_js %}
+<script>
+  function prepareData() {
+    let institutions = document.querySelectorAll("input[name='edu_institution[]']");
+    let degrees = document.querySelectorAll("input[name='edu_degree[]']");
+    let marks = document.querySelectorAll("input[name='edu_marks[]']");
+    let eduData = "";
+    for (let i = 0; i < institutions.length; i++) {
+      let inst = institutions[i].value.trim(), deg = degrees[i].value.trim(), mrk = marks[i].value.trim();
+      if (!inst && !deg && !mrk) continue;
+      eduData += "College:" + inst + "\nCourse:" + deg + "\nMarks:" + mrk + "\n\n";
+    }
+    document.getElementById("education").value = eduData.trim();
 
-    data += "College:" + college + "\n";
-    data += "Course:" + course + "\n";
-    data += "Marks:" + marks + "\n\n";
+    let companies = document.querySelectorAll("input[name='exp_company[]']"), roles = document.querySelectorAll("input[name='exp_role[]']"), descs = document.querySelectorAll("textarea[name='exp_description[]']");
+    let expData = "";
+    for (let i = 0; i < companies.length; i++) {
+        let comp = companies[i].value.trim(), role = roles[i].value.trim(), desc = descs[i].value.trim();
+        if (!comp && !role && !desc) continue;
+        expData += "Company: " + comp + "\nRole: " + role + "\nWork: " + desc + "\n\n";
+    }
+    document.getElementById("internship").value = expData.trim();
   }
-
-  document.getElementById("education").value = data.trim();
-}
-
-      function addProjectField() {
-        let c = document.getElementById("project-container");
-        let d = document.createElement("div");
-        d.innerHTML = `
-        <input type="text" placeholder="Title">
-        <input type="text" placeholder="Tech">
-        <textarea placeholder="Description"></textarea>
-    `;
-        c.appendChild(d);
-      }
-
-      function combineProjects() {
-        let inputs = document.querySelectorAll(
-          "#project-container input, #project-container textarea",
-        );
-        let data = "";
-
-        for (let i = 0; i < inputs.length; i += 3) {
-          let title = inputs[i].value;
-          let tech = inputs[i + 1].value;
-          let desc = inputs[i + 2].value;
-          if (!isFilled(title, tech, desc)) {
-            continue;
-          }
-          data += "Title: " + title + "\n";
-          data += "Tech: " + tech + "\n";
-          data += "Desc: " + desc + "\n\n";
-        }
-
-        document.getElementById("projects").value = data.trim();
-      }
-
-      function addInternshipField() {
-        let c = document.getElementById("internship-container");
-        let d = document.createElement("div");
-        d.innerHTML = `
-        <input type="text" placeholder="Company">
-        <input type="text" placeholder="Role">
-        <textarea placeholder="Work"></textarea>
-    `;
-        c.appendChild(d);
-      }
-
-      function combineInternships() {
-        let inputs = document.querySelectorAll(
-          "#internship-container input, #internship-container textarea",
-        );
-        let data = "";
-        for (let i = 0; i < inputs.length; i += 3) {
-          let company = inputs[i].value;
-          let role = inputs[i + 1].value;
-          let work = inputs[i + 2].value;
-          if (!isFilled(company, role, work)) {
-            continue;
-          }
-          data += "Company: " + company + "\n";
-          data += "Role: " + role + "\n";
-          data += "Work: " + work + "\n\n";
-        }
-        document.getElementById("internship").value = data.trim();
-      }
-
-      function prepareData() {
-        combineEducation();
-        combineProjects();
-        combineInternships();
-      }
-    </script>
-  </head>
-
-  <body>
-    <div class="container">
-      <h2>Resume Generator</h2>
-
-      <form method="POST" onsubmit="prepareData()">
-        {% csrf_token %}
-
-        <input name="name" placeholder="Full Name" />
-        <input name="email" placeholder="Email" />
-        <input name="phone" placeholder="Phone" />
-
-        <h3>Career Objective</h3>
-        <textarea name="career_objective"></textarea>
-
-        <h3>Education</h3>
-        <div id="education-container">
-          <input placeholder="College" />
-          <input placeholder="Course" />
-          <input type="number" placeholder="Marks / Percentage" min="0" max="100" step="0.01">
-        </div>
-        <button type="button" onclick="addEducationField()">
-          + Add Education
-        </button>
-        <input type="hidden" name="education" id="education" />
-
-
-
-        <h3>Projects</h3>
-        <div id="project-container">
-          <input placeholder="Title" />
-          <input placeholder="Tech" />
-          <textarea placeholder="Description"></textarea>
-        </div>
-        <button type="button" onclick="addProjectField()">+ Add Project</button>
-        <input type="hidden" name="projects" id="projects" />
-
-        <h3>Internships</h3>
-        <div id="internship-container">
-          <input placeholder="Company" />
-          <input placeholder="Role" />
-          <textarea placeholder="Work"></textarea>
-        </div>
-        <button type="button" onclick="addInternshipField()">
-          + Add Internship
-        </button>
-        <input type="hidden" name="internship" id="internship" />
-
-        <h3>Languages Known</h3>
-<textarea name="languages_known" placeholder="English, Hindi"></textarea>
-
-        <h3>Skills</h3>
-        <textarea
-          name="programming_languages"
-          placeholder="Programming Languages"
-        ></textarea>
-        <textarea name="web_frameworks" placeholder="Frameworks"></textarea>
-        <textarea name="databases" placeholder="Databases"></textarea>
-        <textarea name="tools" placeholder="Tools"></textarea>
-
-        <h3>Strengths</h3>
-<textarea name="strengths" placeholder="Example: Quick learner, Team player"></textarea>
-
-<h3>Certificates</h3>
-<textarea name="certificates" placeholder="Comma separated"></textarea>
-
-<h3>Extracurricular Activities</h3>
-<textarea name="extracurricular"></textarea>
-
-        <h3>Other</h3>
-        <textarea name="achievements" placeholder="Achievements"></textarea>
-        <textarea name="hobbies" placeholder="Hobbies"></textarea>
-
-        <br /><br />
-        <button type="submit">Generate Resume</button>
-      </form>
-    </div>
-  </body>
-</html>
+  document.body.addEventListener('htmx:configRequest', (event) => { prepareData(); });
+</script>
+<style>
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    .htmx-indicator { display: none !important; }
+    .htmx-request .htmx-indicator { display: flex !important; }
+</style>
+{% endblock %}
