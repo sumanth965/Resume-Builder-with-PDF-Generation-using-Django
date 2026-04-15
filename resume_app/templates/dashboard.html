@@ -175,35 +175,40 @@
     /* ── Resume Card ──────────────────────────────────── */
     .resume-card {
         background: var(--white);
-        border: 1px solid var(--border);
+        border: 1px solid rgba(255, 187, 0, 0.1);
         border-radius: var(--radius-card);
-        box-shadow: var(--shadow-sm);
         padding: 32px;
         display: flex;
         flex-direction: column;
         position: relative;
         overflow: hidden;
+        transform: translateY(-12px);
+        box-shadow:
+            0 24px 48px rgba(15, 17, 23, 0.08),
+            0 1px 4px rgba(15, 17, 23, 0.04),
+            0 0 20px rgba(255, 187, 0, 0.12);
+        /* Premium Gold Shadow */
         transition:
-            transform .4s var(--ease-out),
-            box-shadow .4s var(--ease-out),
-            border-color .3s;
-        animation: cardIn .5s var(--ease-out) both;
+            transform .5s var(--ease-out),
+            box-shadow .5s var(--ease-out),
+            border-color .4s;
+        animation: cardIn .7s var(--ease-out) both;
     }
 
     @keyframes cardIn {
         from {
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(30px) scale(0.98);
         }
 
         to {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(-12px) scale(1);
         }
     }
 
         {
-        % for i in "123456789" %
+        % for i in "12345678" %
     }
 
     .resume-card:nth-child({
@@ -238,9 +243,11 @@
     }
 
     .resume-card:hover {
-        transform: translateY(-5px);
-        box-shadow: var(--shadow-lg);
-        border-color: transparent;
+        transform: translateY(-16px);
+        box-shadow:
+            0 32px 64px rgba(15, 17, 23, 0.12),
+            0 0 30px rgba(255, 187, 0, 0.2);
+        border-color: var(--gold);
     }
 
     .resume-card:hover::before {
@@ -260,66 +267,78 @@
         width: 52px;
         height: 52px;
         border-radius: 14px;
-        background: var(--surface);
-        border: 1px solid var(--border);
+        background: var(--ink);
+        border: 1px solid rgba(255, 255, 255, 0.05);
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: background .3s, transform .4s var(--ease-out);
+        transition: all .4s var(--ease-out);
         flex-shrink: 0;
+        box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.05), 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
     .resume-card:hover .card-avatar {
-        background: var(--accent-lt);
-        transform: scale(1.08) rotate(-3deg);
+        background: var(--ink);
+        transform: scale(1.12) rotate(-5deg);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(255, 187, 0, 0.15);
+        border-color: var(--gold);
     }
 
     .card-avatar svg {
         width: 24px;
         height: 24px;
-        color: var(--ink-3);
-        transition: color .3s;
+        color: var(--gold);
+        transition: color .3s, transform .4s var(--ease-out);
         stroke: currentColor;
     }
 
     .resume-card:hover .card-avatar svg {
-        color: var(--accent);
+        color: #fff;
+        transform: scale(1.1);
     }
 
     /* Template badge */
     .badge {
         font-size: 10px;
         font-weight: 700;
-        letter-spacing: .1em;
+        letter-spacing: .12em;
         text-transform: uppercase;
-        padding: 4px 12px;
+        padding: 5px 14px;
         border-radius: 100px;
-        border: 1.5px solid;
+        border: 1px solid rgba(255, 187, 0, 0.3);
         flex-shrink: 0;
+        background: var(--ink);
+        color: var(--gold);
+        transition: all .3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     .badge--modern {
-        background: #eff6ff;
-        color: #2563eb;
-        border-color: #bfdbfe;
+        background: var(--ink);
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.2);
     }
 
     .badge--professional {
-        background: #f1f5f9;
-        color: #334155;
-        border-color: #cbd5e1;
+        background: var(--ink);
+        color: var(--gold);
+        border-color: var(--gold);
     }
 
     .badge--creative {
-        background: #fff7ed;
-        color: #c2410c;
-        border-color: #fed7aa;
+        background: var(--gold);
+        color: var(--ink);
+        border-color: var(--gold);
     }
 
     .badge--default {
-        background: var(--surface);
-        color: var(--ink-2);
-        border-color: var(--border);
+        background: #1c2030;
+        color: var(--ink-3);
+        border-color: var(--ink-3);
+    }
+
+    .resume-card:hover .badge--professional {
+        box-shadow: 0 0 12px rgba(255, 187, 0, 0.2);
     }
 
     /* Card body */
@@ -365,68 +384,82 @@
     .card-actions {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 12px;
         margin-top: auto;
     }
 
-    .btn-edit {
-        flex: 1;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 7px;
-        padding: 10px 18px;
-        background: var(--surface);
+    .action-group {
+        display: flex;
+        align-items: stretch;
+        background: var(--white);
         border: 1px solid var(--border);
-        color: var(--ink-2);
-        font-family: var(--font-body);
-        font-size: 12px;
-        font-weight: 600;
-        letter-spacing: .04em;
-        text-transform: uppercase;
-        border-radius: 10px;
-        text-decoration: none;
-        transition: background .2s, border-color .2s, color .2s, transform .2s;
+        border-radius: 14px;
+        overflow: hidden;
+        flex: 1;
+        box-shadow: 0 2px 8px rgba(15, 17, 23, 0.05);
     }
 
-    .btn-edit:hover {
-        background: var(--accent-lt);
-        border-color: #bfdbfe;
-        color: var(--accent);
-        transform: translateY(-1px);
-    }
-
-    .btn-edit svg {
-        width: 13px;
-        height: 13px;
-        stroke: currentColor;
-    }
-
-    .btn-icon {
-        width: 40px;
-        height: 40px;
+    .action-btn {
+        flex: 1;
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        background: var(--white);
+        gap: 8px;
+        padding: 12px 16px;
+        color: var(--ink);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all .2s;
+        border-right: 1px solid var(--border);
+        background: transparent;
         cursor: pointer;
-        transition: background .2s, border-color .2s, transform .2s, color .2s;
+    }
+
+    .action-btn:last-child {
+        border-right: none;
+    }
+
+    .action-btn.icon-only {
+        flex: 0 0 52px;
+    }
+
+    .action-btn:hover {
+        background: var(--surface);
+        color: var(--accent);
+    }
+
+    .action-btn svg {
+        width: 18px;
+        height: 18px;
+        stroke: currentColor;
+        stroke-width: 2;
+    }
+
+    .btn-more {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 14px;
         color: var(--ink-3);
-        flex-shrink: 0;
+        cursor: pointer;
+        transition: all .2s;
+        box-shadow: 0 2px 8px rgba(15, 17, 23, 0.05);
     }
 
-    .btn-icon:hover {
-        background: var(--gold-lt);
-        border-color: #e8c96e;
-        color: var(--gold);
-        transform: translateY(-1px);
+    .btn-more:hover {
+        background: var(--surface);
+        color: var(--ink);
+        border-color: var(--ink-3);
     }
 
-    .btn-icon svg {
-        width: 15px;
-        height: 15px;
+    .btn-more svg {
+        width: 20px;
+        height: 20px;
         stroke: currentColor;
     }
 
@@ -593,23 +626,36 @@
 
                 <!-- Actions -->
                 <div class="card-actions">
-                    <a href="{% url 'edit_resume' resume.id %}" class="btn-edit">
-                        <svg fill="none" viewBox="0 0 24 24">
+                    <div class="action-group">
+                        <a href="{% url 'edit_resume' resume.id %}" class="action-btn" title="Edit Resume">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            <span>Edit</span>
+                        </a>
+                        <a href="#" class="action-btn" title="Preview Resume">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                            <span>Preview</span>
+                        </a>
+                        <a href="{% url 'export_resume_html' resume.id %}" class="action-btn icon-only"
+                            title="Download">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                        </a>
+                    </div>
+
+                    <button class="btn-more" title="More options">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                        Edit
-                    </a>
-                    <button class="btn-icon" title="Download">
-                        <svg fill="none" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                        </svg>
-                    </button>
-                    <button class="btn-icon" title="More options">
-                        <svg fill="none" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                                d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
                         </svg>
                     </button>
                 </div>
