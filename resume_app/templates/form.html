@@ -1,0 +1,1026 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <title>Resume Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    :root {
+      --navy: #0d1b2a;
+      --navy-mid: #1b2d42;
+      --accent: #c8a96e;
+      --accent-light: #f5edd9;
+      --accent-pale: #fdf8ef;
+      --white: #ffffff;
+      --off-white: #f7f5f0;
+      --text-primary: #0d1b2a;
+      --text-secondary: #4a5568;
+      --text-muted: #8a9ab0;
+      --border: #e4ddd0;
+      --border-focus: #c8a96e;
+      --input-bg: #fdfcfa;
+      --section-num: #e8e0d4;
+      --shadow-sm: 0 1px 3px rgba(13, 27, 42, 0.06), 0 1px 2px rgba(13, 27, 42, 0.04);
+      --shadow-md: 0 4px 24px rgba(13, 27, 42, 0.09), 0 2px 8px rgba(13, 27, 42, 0.05);
+      --shadow-lg: 0 20px 60px rgba(13, 27, 42, 0.12), 0 8px 24px rgba(13, 27, 42, 0.07);
+      --radius: 14px;
+      --radius-sm: 8px;
+      --radius-xs: 6px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--off-white);
+      background-image:
+        radial-gradient(ellipse 80% 60% at 10% 0%, rgba(200, 169, 110, 0.08) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 50% at 90% 100%, rgba(13, 27, 42, 0.05) 0%, transparent 55%);
+      min-height: 100vh;
+      padding-bottom: 80px;
+      color: var(--text-primary);
+    }
+
+    /* ─── Sticky Header ─── */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13, 27, 42, 0.97);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(200, 169, 110, 0.18);
+      padding: 0 32px;
+    }
+
+    .header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .header-logo {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent), #a07840);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-logo svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .header-title {
+      font-family: 'Fraunces', serif;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--white);
+      letter-spacing: -0.01em;
+    }
+
+    .header-subtitle {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.4);
+      font-weight: 300;
+      letter-spacing: 0.02em;
+    }
+
+    .header-badge {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--accent);
+      background: rgba(200, 169, 110, 0.12);
+      border: 1px solid rgba(200, 169, 110, 0.25);
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* ─── Page Hero ─── */
+    .page-hero {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 52px 24px 36px;
+      text-align: center;
+    }
+
+    .page-hero h1 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 300;
+      color: var(--navy);
+      letter-spacing: -0.03em;
+      line-height: 1.18;
+      margin-bottom: 14px;
+    }
+
+    .page-hero h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .page-hero p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      font-weight: 300;
+      letter-spacing: 0.01em;
+      max-width: 440px;
+      margin: 0 auto;
+      line-height: 1.65;
+    }
+
+    /* ─── Steps Bar ─── */
+    .steps-bar {
+      max-width: 900px;
+      margin: 0 auto 10px;
+      padding: 0 24px;
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .steps-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .step-pill {
+      flex-shrink: 0;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 13px;
+      cursor: default;
+      transition: all 0.2s;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    .step-pill.active {
+      color: var(--navy);
+      border-color: var(--accent);
+      background: var(--accent-pale);
+    }
+
+    /* ─── Main Card ─── */
+    .main-card {
+      max-width: 900px;
+      margin: 20px auto 0;
+      padding: 0 24px;
+    }
+
+    .form-card {
+      background: var(--white);
+      border-radius: 20px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    /* ─── Section Block ─── */
+    .section-block {
+      padding: 40px 48px;
+      border-bottom: 1px solid var(--section-num);
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .section-block:last-of-type {
+      border-bottom: none;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 30px;
+    }
+
+    .section-num {
+      width: 38px;
+      height: 38px;
+      min-width: 38px;
+      background: var(--section-num);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fraunces', serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .section-meta h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 19px;
+      font-weight: 600;
+      color: var(--navy);
+      letter-spacing: -0.02em;
+      margin-bottom: 3px;
+    }
+
+    .section-meta p {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 300;
+      line-height: 1.5;
+    }
+
+    /* ─── Grid Layouts ─── */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .grid-full {
+      width: 100%;
+    }
+
+    @media (max-width: 640px) {
+
+      .grid-3,
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .section-block {
+        padding: 28px 22px;
+      }
+    }
+
+    /* ─── Field Group ─── */
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--navy);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .field-hint {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 300;
+      margin-top: -2px;
+      line-height: 1.4;
+    }
+
+    /* ─── Inputs ─── */
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="number"],
+    textarea,
+    input:not([type="hidden"]):not([type="button"]):not([type="submit"]) {
+      width: 100%;
+      padding: 11px 14px;
+      background: var(--input-bg);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-primary);
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      outline: none;
+      resize: vertical;
+      line-height: 1.5;
+      -webkit-appearance: none;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: var(--border-focus);
+      background: var(--white);
+      box-shadow: 0 0 0 3.5px rgba(200, 169, 110, 0.13);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+    textarea {
+      min-height: 90px;
+    }
+
+    /* ─── Repeating Entry Card ─── */
+    .entry-list {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .entry-card {
+      background: var(--off-white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 22px 20px;
+      position: relative;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .entry-card:hover {
+      border-color: rgba(200, 169, 110, 0.5);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .entry-card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .entry-card-grid .span-full {
+      grid-column: 1 / -1;
+    }
+
+    @media (max-width: 560px) {
+      .entry-card-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .entry-tag {
+      position: absolute;
+      top: -1px;
+      left: 20px;
+      background: var(--accent);
+      color: var(--white);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 0 0 7px 7px;
+    }
+
+    /* ─── Buttons ─── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      transition: all 0.18s;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--navy);
+      border: 1.5px solid var(--border);
+      padding: 9px 16px;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-pale);
+    }
+
+    .btn-ghost svg {
+      transition: transform 0.18s;
+    }
+
+    .btn-ghost:hover svg {
+      transform: rotate(90deg);
+    }
+
+    .btn-submit {
+      background: var(--navy);
+      color: var(--white);
+      padding: 15px 40px;
+      font-size: 15px;
+      font-weight: 500;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.22s;
+    }
+
+    .btn-submit::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(200, 169, 110, 0.18), transparent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .btn-submit:hover {
+      background: var(--navy-mid);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(13, 27, 42, 0.2);
+    }
+
+    .btn-submit:hover::after {
+      opacity: 1;
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    /* ─── Skills Grid ─── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 560px) {
+      .skills-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ─── Skill Field ─── */
+    .skill-field {
+      background: var(--off-white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      transition: border-color 0.2s;
+    }
+
+    .skill-field:hover {
+      border-color: rgba(200, 169, 110, 0.4);
+    }
+
+    .skill-field .field-label {
+      margin-bottom: 8px;
+    }
+
+    .skill-field textarea {
+      background: var(--white);
+      min-height: 72px;
+    }
+
+    /* ─── Submit Area ─── */
+    .submit-area {
+      background: linear-gradient(to bottom, var(--white), var(--accent-pale));
+      padding: 42px 48px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .submit-note {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      font-weight: 300;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .submit-note svg {
+      flex-shrink: 0;
+    }
+
+    /* ─── Divider ─── */
+    .field-divider {
+      height: 1px;
+      background: var(--section-num);
+      margin: 20px 0;
+    }
+
+    /* ─── Hidden inputs ─── */
+    input[type="hidden"] {
+      display: none !important;
+    }
+  </style>
+
+  <script>
+    /* ── ALL ORIGINAL JS — UNTOUCHED ── */
+    function addEducationField() {
+      let container = document.getElementById("education-container");
+      let div = document.createElement("div");
+      div.className = "entry-card";
+      div.style.animation = "fadeUp 0.3s ease both";
+      div.innerHTML = `
+          <div class="entry-tag">Education</div>
+          <div class="entry-card-grid" style="margin-top:10px;">
+            <div class="field-group">
+              <label class="field-label">College / University</label>
+              <input type="text" placeholder="e.g. MIT, IIT Bombay">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Course / Degree</label>
+              <input type="text" placeholder="e.g. B.Tech Computer Science">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Marks / Percentage</label>
+              <input type="number" placeholder="e.g. 89.5" min="0" max="100" step="0.01">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Year</label>
+              <input type="text" placeholder="e.g. 2020 - 2024">
+            </div>
+          </div>
+        `;
+      container.appendChild(div);
+    }
+
+    function isFilled(...values) {
+      return values.some((value) => value.trim().length > 0);
+    }
+
+    function combineEducation() {
+      let inputs = document.querySelectorAll("#education-container input");
+      let data = "";
+      for (let i = 0; i < inputs.length; i += 4) {
+        let college = inputs[i].value.trim();
+        let course = inputs[i + 1].value.trim();
+        let marks = inputs[i + 2].value.trim();
+        let year = inputs[i + 3].value.trim();
+        if (!college && !course && !marks && !year) continue;
+        data += "College:" + college + "\n";
+        data += "Course:" + course + "\n";
+        data += "Marks:" + marks + "\n";
+        data += "Year:" + year + "\n\n";
+      }
+      document.getElementById("education").value = data.trim();
+    }
+
+    function addProjectField() {
+      let c = document.getElementById("project-container");
+      let d = document.createElement("div");
+      d.className = "entry-card";
+      d.style.animation = "fadeUp 0.3s ease both";
+      d.innerHTML = `
+          <div class="entry-tag">Project</div>
+          <div class="entry-card-grid" style="margin-top:10px;">
+            <div class="field-group">
+              <label class="field-label">Project Title</label>
+              <input type="text" placeholder="e.g. AI Resume Builder">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Technologies Used</label>
+              <input type="text" placeholder="e.g. Python, React, MongoDB">
+            </div>
+            <div class="field-group span-full">
+              <label class="field-label">Description</label>
+              <textarea placeholder="Briefly describe what this project does and your role…"></textarea>
+            </div>
+          </div>
+        `;
+      c.appendChild(d);
+    }
+
+    function combineProjects() {
+      let inputs = document.querySelectorAll(
+        "#project-container input, #project-container textarea"
+      );
+      let data = "";
+      for (let i = 0; i < inputs.length; i += 3) {
+        let title = inputs[i].value;
+        let tech = inputs[i + 1].value;
+        let desc = inputs[i + 2].value;
+        if (!isFilled(title, tech, desc)) continue;
+        data += "Title: " + title + "\n";
+        data += "Tech: " + tech + "\n";
+        data += "Desc: " + desc + "\n\n";
+      }
+      document.getElementById("projects").value = data.trim();
+    }
+
+    function addInternshipField() {
+      let c = document.getElementById("internship-container");
+      let d = document.createElement("div");
+      d.className = "entry-card";
+      d.style.animation = "fadeUp 0.3s ease both";
+      d.innerHTML = `
+          <div class="entry-tag">Experience</div>
+          <div class="entry-card-grid" style="margin-top:10px;">
+            <div class="field-group">
+              <label class="field-label">Company Name</label>
+              <input type="text" placeholder="e.g. Google, Infosys">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Your Role</label>
+              <input type="text" placeholder="e.g. Software Engineer Intern">
+            </div>
+            <div class="field-group span-full">
+              <label class="field-label">Responsibilities</label>
+              <textarea placeholder="Describe your key contributions and achievements…"></textarea>
+            </div>
+          </div>
+        `;
+      c.appendChild(d);
+    }
+
+    function combineInternships() {
+      let inputs = document.querySelectorAll(
+        "#internship-container input, #internship-container textarea"
+      );
+      let data = "";
+      for (let i = 0; i < inputs.length; i += 3) {
+        let company = inputs[i].value;
+        let role = inputs[i + 1].value;
+        let work = inputs[i + 2].value;
+        if (!isFilled(company, role, work)) continue;
+        data += "Company: " + company + "\n";
+        data += "Role: " + role + "\n";
+        data += "Work: " + work + "\n\n";
+      }
+      document.getElementById("internship").value = data.trim();
+    }
+
+    function prepareData() {
+      combineEducation();
+      combineProjects();
+      combineInternships();
+    }
+  </script>
+</head>
+
+<body>
+
+  <!-- ─── Sticky Header ─── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <div class="header-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+            <polyline points="10 9 9 9 8 9" />
+          </svg>
+        </div>
+        <div>
+          <div class="header-title">Resume Generator</div>
+          <div class="header-subtitle">Craft your professional story</div>
+        </div>
+      </div>
+      <div class="header-badge">Free Tool</div>
+    </div>
+  </header>
+
+  <!-- ─── Hero ─── -->
+  <div class="page-hero">
+    <h1>Build a resume that<br><em>gets you noticed</em></h1>
+    <p>Fill in the sections below and we'll craft a clean, professional resume in seconds. Everything stays private.</p>
+  </div>
+
+  <!-- ─── Steps Pill Bar ─── -->
+  <div class="steps-bar">
+    <div class="step-pill active">① Personal</div>
+    <div class="step-pill">② Education</div>
+    <div class="step-pill">③ Projects</div>
+    <div class="step-pill">④ Experience</div>
+    <div class="step-pill">⑤ Skills</div>
+    <div class="step-pill">⑥ Extras</div>
+  </div>
+
+  <!-- ─── Main Form ─── -->
+  <div class="main-card">
+    <div class="form-card">
+      <form method="POST" onsubmit="prepareData()">
+        {% csrf_token %}
+
+        <!-- 1 · Personal Details -->
+        <div class="section-block">
+          <div class="section-header">
+            <div class="section-num">01</div>
+            <div class="section-meta">
+              <h3>Personal Details</h3>
+              <p>Your basic contact information, visible at the top of your resume.</p>
+            </div>
+          </div>
+          <div class="grid-3">
+            <div class="field-group">
+              <label class="field-label">Full Name</label>
+              <input type="text" name="name" placeholder="Jane Doe" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Email Address</label>
+              <input type="text" name="email" placeholder="jane@example.com" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Phone Number</label>
+              <input type="text" name="phone" placeholder="+91 98765 43210" />
+            </div>
+          </div>
+
+          <div class="field-divider"></div>
+
+          <div class="field-group">
+            <label class="field-label">Career Objective</label>
+            <p class="field-hint">Write 2–3 sentences about your professional goals and what you bring to the table.</p>
+            <textarea name="career_objective" style="min-height:100px;"
+              placeholder="A motivated Computer Science graduate seeking to leverage strong analytical and programming skills in a challenging software engineering role…"></textarea>
+          </div>
+        </div>
+
+        <!-- 2 · Education -->
+        <div class="section-block">
+          <div class="section-header">
+            <div class="section-num">02</div>
+            <div class="section-meta">
+              <h3>Education</h3>
+              <p>Add your academic qualifications from most recent to oldest.</p>
+            </div>
+          </div>
+
+          <div class="entry-list" id="education-container">
+            <div class="entry-card">
+              <div class="entry-tag">Education</div>
+              <div class="entry-card-grid" style="margin-top:10px;">
+                <div class="field-group">
+                  <label class="field-label">College / University</label>
+                  <input type="text" placeholder="e.g. MIT, IIT Bombay" />
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Course / Degree</label>
+                  <input type="text" placeholder="e.g. B.Tech Computer Science" />
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Marks / Percentage</label>
+                  <input type="number" placeholder="e.g. 89.5" min="0" max="100" step="0.01" />
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Year</label>
+                  <input type="text" placeholder="e.g. 2020 - 2024" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <input type="hidden" name="education" id="education" />
+
+          <div style="margin-top:18px;">
+            <button type="button" class="btn btn-ghost" onclick="addEducationField()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Add Education
+            </button>
+          </div>
+        </div>
+
+        <!-- 3 · Projects -->
+        <div class="section-block">
+          <div class="section-header">
+            <div class="section-num">03</div>
+            <div class="section-meta">
+              <h3>Projects</h3>
+              <p>Showcase work you're proud of — personal builds, academic projects, open-source contributions.</p>
+            </div>
+          </div>
+
+          <div class="entry-list" id="project-container">
+            <div class="entry-card">
+              <div class="entry-tag">Project</div>
+              <div class="entry-card-grid" style="margin-top:10px;">
+                <div class="field-group">
+                  <label class="field-label">Project Title</label>
+                  <input type="text" placeholder="e.g. AI Resume Builder" />
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Technologies Used</label>
+                  <input type="text" placeholder="e.g. Python, React, MongoDB" />
+                </div>
+                <div class="field-group span-full">
+                  <label class="field-label">Description</label>
+                  <textarea placeholder="Briefly describe what this project does and your role…"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <input type="hidden" name="projects" id="projects" />
+
+          <div style="margin-top:18px;">
+            <button type="button" class="btn btn-ghost" onclick="addProjectField()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Add Project
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 · Internships / Experience -->
+        <div class="section-block">
+          <div class="section-header">
+            <div class="section-num">04</div>
+            <div class="section-meta">
+              <h3>Internships &amp; Experience</h3>
+              <p>Include internships, part-time roles, freelance work, or any relevant professional experience.</p>
+            </div>
+          </div>
+
+          <div class="entry-list" id="internship-container">
+            <div class="entry-card">
+              <div class="entry-tag">Experience</div>
+              <div class="entry-card-grid" style="margin-top:10px;">
+                <div class="field-group">
+                  <label class="field-label">Company Name</label>
+                  <input type="text" placeholder="e.g. Google, Infosys" />
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Your Role</label>
+                  <input type="text" placeholder="e.g. Software Engineer Intern" />
+                </div>
+                <div class="field-group span-full">
+                  <label class="field-label">Responsibilities</label>
+                  <textarea placeholder="Describe your key contributions and achievements…"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <input type="hidden" name="internship" id="internship" />
+
+          <div style="margin-top:18px;">
+            <button type="button" class="btn btn-ghost" onclick="addInternshipField()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Add Internship
+            </button>
+          </div>
+        </div>
+
+        <!-- 5 · Skills -->
+        <div class="section-block">
+          <div class="section-header">
+            <div class="section-num">05</div>
+            <div class="section-meta">
+              <h3>Skills &amp; Languages</h3>
+              <p>List your technical skills and languages known. Separate items with commas.</p>
+            </div>
+          </div>
+
+          <div class="skills-grid">
+            <div class="skill-field">
+              <div class="field-label">Programming Languages</div>
+              <p class="field-hint" style="margin:4px 0 8px;">e.g. Python, Java, C++</p>
+              <textarea name="programming_languages" placeholder="Python, Java, C++, JavaScript…"></textarea>
+            </div>
+            <div class="skill-field">
+              <div class="field-label">Frameworks &amp; Libraries</div>
+              <p class="field-hint" style="margin:4px 0 8px;">e.g. React, Django, Spring Boot</p>
+              <textarea name="web_frameworks" placeholder="React, Django, Node.js, Flask…"></textarea>
+            </div>
+            <div class="skill-field">
+              <div class="field-label">Databases</div>
+              <p class="field-hint" style="margin:4px 0 8px;">e.g. MySQL, MongoDB, PostgreSQL</p>
+              <textarea name="databases" placeholder="MySQL, MongoDB, Redis…"></textarea>
+            </div>
+            <div class="skill-field">
+              <div class="field-label">Tools &amp; Platforms</div>
+              <p class="field-hint" style="margin:4px 0 8px;">e.g. Git, Docker, AWS</p>
+              <textarea name="tools" placeholder="Git, Docker, VS Code, Linux…"></textarea>
+            </div>
+          </div>
+
+          <div class="field-divider"></div>
+
+          <div class="grid-2">
+            <div class="field-group">
+              <label class="field-label">Languages Known</label>
+              <p class="field-hint">Natural languages you speak or read.</p>
+              <input type="text" name="languages_known" placeholder="English, Hindi, Tamil…" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Strengths</label>
+              <p class="field-hint">Key personal attributes that set you apart.</p>
+              <input type="text" name="strengths" placeholder="Quick learner, Team player, Leadership…" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 6 · Extras -->
+        <div class="section-block">
+          <div class="section-header">
+            <div class="section-num">06</div>
+            <div class="section-meta">
+              <h3>Extra Details</h3>
+              <p>Round out your resume with certificates, activities, achievements and hobbies.</p>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="field-group">
+              <label class="field-label">Certificates</label>
+              <p class="field-hint">Comma-separated list of certifications.</p>
+              <textarea name="certificates" placeholder="AWS Certified Developer, Google UX Design…"></textarea>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Extracurricular Activities</label>
+              <p class="field-hint">Clubs, sports, volunteering, leadership roles.</p>
+              <textarea name="extracurricular" placeholder="NSS Volunteer, Chess Club President…"></textarea>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Achievements &amp; Awards</label>
+              <p class="field-hint">Hackathon wins, scholarships, recognitions.</p>
+              <textarea name="achievements" placeholder="1st place at XYZ Hackathon, Merit Scholarship…"></textarea>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Hobbies &amp; Interests</label>
+              <p class="field-hint">A glimpse of your personality beyond work.</p>
+              <textarea name="hobbies" placeholder="Photography, Open-source, Rock climbing…"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="submit-area">
+          <button type="submit" class="btn-submit">
+            Generate My Resume &nbsp;→
+          </button>
+          <div class="submit-note">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+            Your information is processed locally and never stored on our servers.
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+</body>
+
+</html>

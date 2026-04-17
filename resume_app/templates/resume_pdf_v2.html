@@ -1,0 +1,296 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @page {
+      size: A4;
+      margin: 15mm 18mm 15mm 18mm;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 9.5px;
+      line-height: 1.5;
+      color: #222;
+      background: #fff;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      text-align: center;
+      padding-bottom: 8px;
+      /* border-bottom: 2px solid #111; */
+      margin-bottom: 12px;
+    }
+
+    .name {
+      font-size: 26px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+      color: #000;
+    }
+
+    .contact {
+      font-size: 9.5px;
+      color: #444;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── SECTION ── */
+    .section {
+      margin-bottom: 12px;
+    }
+
+    .heading {
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #111;
+      border-bottom: 1px solid #111;
+      padding-bottom: 3px;
+      margin-bottom: 6px;
+    }
+
+    /* ── TABLES ── */
+    .edu-table,
+    .skills-table,
+    .cert-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .edu-table th {
+      text-align: left;
+      font-size: 9px;
+      color: #666;
+      padding-bottom: 4px;
+    }
+
+    .edu-table td {
+      padding: 6px 0;
+      vertical-align: top;
+    }
+
+    /* ── SKILLS ── */
+    .skill-group {
+      vertical-align: top;
+      width: 50%;
+      padding-right: 15px;
+      padding-bottom: 4px;
+    }
+
+    .skill-group p {
+      margin-bottom: 3px;
+    }
+
+    /* ── ENTRIES (Projects/Internships) ── */
+    .entry-block {
+      margin-bottom: 8px;
+    }
+
+    .title {
+      font-weight: bold;
+      font-size: 10px;
+      color: #000;
+      margin-bottom: 1px;
+    }
+
+    .subtitle {
+      font-style: italic;
+      color: #555;
+      font-size: 9px;
+      margin-bottom: 2px;
+    }
+
+    .content {
+      font-size: 9px;
+      color: #333;
+      text-align: justify;
+    }
+
+    /* ── LISTS ── */
+    ul {
+      margin: 2px 0 6px 14px;
+    }
+
+    li {
+      margin-bottom: 2px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ── CONTACT INFORMATION ── -->
+  <div class="header">
+    <div class="name">{{ resume.name|upper }}</div>
+    <div class="contact">{{ resume.email }} | {{ resume.phone }}</div>
+  </div>
+
+  <!-- ── SUMMARY (CAREER OBJECTIVE) ── -->
+  {% if resume.career_objective %}
+  <div class="section">
+    <div class="heading">Summary</div>
+    <p class="content">{{ resume.career_objective }}</p>
+  </div>
+  {% endif %}
+
+  <!-- ── SKILLS ── -->
+  {% if resume.programming_languages_list or resume.web_frameworks_list or resume.databases_list or resume.tools_list or resume.strengths_list %}
+  <div class="section">
+    <div class="heading">Skills</div>
+
+    {% if resume.strengths_list %}
+    <div style="margin-bottom: 5px;">
+      <p><b>Strengths:</b> {{ resume.strengths_list|join:", " }}</p>
+    </div>
+    {% endif %}
+
+    <table class="skills-table">
+      <tr>
+        <td class="skill-group">
+          {% if resume.programming_languages_list %}
+          <p><b>Languages:</b> {{ resume.programming_languages_list|join:", " }}</p>
+          {% endif %}
+          {% if resume.databases_list %}
+          <p><b>Databases:</b> {{ resume.databases_list|join:", " }}</p>
+          {% endif %}
+        </td>
+        <td class="skill-group">
+          {% if resume.web_frameworks_list %}
+          <p><b>Frameworks/Web:</b> {{ resume.web_frameworks_list|join:", " }}</p>
+          {% endif %}
+          {% if resume.tools_list %}
+          <p><b>Tools &amp; Others:</b> {{ resume.tools_list|join:", " }}</p>
+          {% endif %}
+        </td>
+      </tr>
+    </table>
+  </div>
+  {% endif %}
+
+  <!-- ── EDUCATION ── -->
+  {% if resume.education_data %}
+  <div class="section">
+    <div class="heading">Education</div>
+    <table class="edu-table">
+      <thead>
+        <tr>
+          <th style="width:65%">Institution &amp; Degree</th>
+          <th style="width:20%">Year</th>
+          <th style="width:15%">Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for edu in resume.education_data %}
+        <tr>
+          <td>
+            <div class="title">{{ edu.college }}</div>
+            <div class="subtitle">{{ edu.course }}</div>
+          </td>
+          <td style="font-size: 9px; color: #444;">{{ edu.year }}</td>
+          <td style="font-weight: bold;">{{ edu.marks }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  <!-- ── PROJECTS ── -->
+  {% if resume.projects_lines or resume.internship_lines %}
+  <div class="section">
+    <div class="heading">Projects &amp; Experience</div>
+
+    {% if resume.internship_lines %}
+    <div style="margin-bottom: 8px;">
+      {% for line in resume.internship_lines %}
+      {% if "Company:" in line %}
+      {% if not forloop.first %}</div>{% endif %}
+    <div class="entry-block">
+      <div class="title">{{ line|cut:"Company:" }} (Internship)</div>
+      {% elif "Role:" in line %}
+      <div class="subtitle">{{ line|cut:"Role:" }}</div>
+      {% elif "Work:" in line %}
+      <div class="content">&bull; {{ line|cut:"Work:" }}</div>
+      {% else %}
+      {% if line.strip %}<div class="content">&bull; {{ line }}</div>{% endif %}
+      {% endif %}
+      {% if forloop.last %}
+    </div>{% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if resume.projects_lines %}
+  {% for line in resume.projects_lines %}
+  {% if "Title:" in line %}
+  {% if not forloop.first %}</div>{% endif %}
+  <div class="entry-block">
+    <div class="title">{{ line|cut:"Title:" }}</div>
+    {% elif "Tech:" in line %}
+    <div class="subtitle">{{ line|cut:"Tech:" }}</div>
+    {% elif "Desc:" in line %}
+    <div class="content">&bull; {{ line|cut:"Desc:" }}</div>
+    {% else %}
+    {% if line.strip %}<div class="content">&bull; {{ line }}</div>{% endif %}
+    {% endif %}
+    {% if forloop.last %}
+  </div>{% endif %}
+  {% endfor %}
+  {% endif %}
+  </div>
+  {% endif %}
+
+  <!-- ── CERTIFICATIONS ── -->
+  {% if resume.certificates_list %}
+  <div class="section">
+    <div class="heading">Certifications</div>
+    <ul>
+      {% for item in resume.certificates_list %}
+      <li class="content">{{ item }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <!-- ── ADDITIONAL INFORMATION ── -->
+  {% if resume.achievements_list or resume.languages_known_list or resume.hobbies_list or resume.extracurricular_lines %}
+  <div class="section">
+    <div class="heading">Additional Details</div>
+
+    {% if resume.achievements_list %}
+    <p><b>Achievements:</b> {{ resume.achievements_list|join:" &nbsp;&bull;&nbsp; "|safe }}</p>
+    {% endif %}
+
+    {% if resume.languages_known_list %}
+    <p><b>Languages:</b> {{ resume.languages_known_list|join:", " }}</p>
+    {% endif %}
+
+    {% if resume.hobbies_list %}
+    <p><b>Hobbies:</b> {{ resume.hobbies_list|join:", " }}</p>
+    {% endif %}
+
+    {% if resume.extracurricular_lines %}
+    <div style="margin-top: 4px;">
+      {% for line in resume.extracurricular_lines %}
+      <div class="content">&bull; {{ line }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+</body>
+
+</html>
